@@ -7,9 +7,29 @@ var playerupHeld;
 var playerdownHeld;
 var playerleftHeld;
 var playerrightHeld;
+var crosshair;
+
+function objectCenter(object) {
+    let objectboundingRect = object.getBoundingClientRect();
+    return {
+        x: parseInt(object.style.left) + objectboundingRect.width/2,
+        y: parseInt(object.style.top) + objectboundingRect.height/2
+    };
+}
+
+function movePlayer(object, direction, distance, object2) {
+    if (direction == "top") {
+        object.style.top = `${parseInt(object.style.top) + distance}px`;
+    } else if (direction == "left") {
+        object.style.left = `${parseInt(object.style.left) + distance}px`;
+    }
+    object2.style.transformOrigin = `${objectCenter(player).x} ${objectCenter(player).y}`;
+}
+
 
 document.addEventListener("keydown", function(event) {
     player = document.getElementById("player");
+    crosshair = document.getElementById("crosshair");
     if(event.key == "w") {
         if (!playermoveUp) {
             if (playermoveDown) {
@@ -17,7 +37,7 @@ document.addEventListener("keydown", function(event) {
                 playermoveDown = undefined;
                 playerdownHeld = true;
             }
-            playermoveUp = setInterval(function () {player.style.top = parseInt(player.style.top) - 2 + "px"}, 10);
+            playermoveUp = setInterval(movePlayer, 10, player, "top", -2, crosshair);
         }
     } else if(event.key == "s") {
         if (!playermoveDown) {
@@ -26,7 +46,7 @@ document.addEventListener("keydown", function(event) {
                 playermoveUp = undefined;
                 playerupHeld = true;
             }
-            playermoveDown = setInterval(function () {player.style.top = parseInt(player.style.top) + 2 + "px"}, 10);
+            playermoveDown = setInterval(movePlayer, 10, player, "top", 2, crosshair);
         }
     }
     if(event.key == "a") {
@@ -36,7 +56,7 @@ document.addEventListener("keydown", function(event) {
                 playermoveRight = undefined;
                 playerrightHeld = true;
             }
-            playermoveLeft = setInterval(function () {player.style.left = parseInt(player.style.left) - 2 + "px"}, 10);
+            playermoveLeft = setInterval(movePlayer, 10, player, "left", -2, crosshair);
         }
     } else if(event.key == "d") {
         if (!playermoveRight) {
@@ -45,19 +65,21 @@ document.addEventListener("keydown", function(event) {
                 playermoveLeft = undefined;
                 playerleftHeld = true;
             }
-            playermoveRight = setInterval(function () {player.style.left = parseInt(player.style.left) + 2 + "px"}, 10);
+            playermoveRight = setInterval(movePlayer, 10, player, "left", 2, crosshair);
         }
     }
 });
 
 document.addEventListener("keyup", function(event) {
+    player = document.getElementById("player");
+    crosshair = document.getElementById("crosshair");
     if(event.key == "w") {
         playerupHeld = false;
         if (playermoveUp) {
             clearInterval(playermoveUp);
             playermoveUp = undefined;
             if (playerdownHeld) {
-                playermoveDown = setInterval(function () {player.style.top = parseInt(player.style.top) + 2 + "px"}, 10);
+                playermoveDown = setInterval(movePlayer, 10, player, "top", -2, crosshair);
             }
         }
     }
@@ -67,7 +89,7 @@ document.addEventListener("keyup", function(event) {
             clearInterval(playermoveDown);
             playermoveDown = undefined;
             if (playerupHeld) {
-                playermoveUp = setInterval(function () {player.style.top = parseInt(player.style.top) - 2 + "px"}, 10);
+                playermoveUp = setInterval(movePlayer, 10, player, "top", 2, crosshair);
             }
         }
     }
@@ -77,7 +99,7 @@ document.addEventListener("keyup", function(event) {
             clearInterval(playermoveLeft);
             playermoveLeft = undefined;
             if (playerrightHeld) {
-                playermoveRight = setInterval(function () {player.style.left = parseInt(player.style.left) + 2 + "px"}, 10);
+                playermoveRight = setInterval(movePlayer, 10, player, "left", -2, crosshair);
             }
         }
     }
@@ -87,8 +109,18 @@ document.addEventListener("keyup", function(event) {
             clearInterval(playermoveRight);
             playermoveRight = undefined;
             if (playerleftHeld) {
-                playermoveLeft = setInterval(function () {player.style.left = parseInt(player.style.left) - 2 + "px"}, 10);
+                playermoveLeft = setInterval(movePlayer, 10, player, "left", 2, crosshair);
             }
         }
     }
 });
+
+
+document.addEventListener("mousemove", e => {
+    player = document.getElementById("player");
+    crosshair = document.getElementById("crosshair");
+    let playercenter = objectCenter(player);
+    // console.log(playercenter);
+    let angle = Math.atan2(e.pageX - playercenter.x, - (e.pageY - playercenter.y) )*(180 / Math.PI);
+    crosshair.style.transform = `rotate(${angle}deg)`;
+})

@@ -2,4 +2,31 @@
     background-color: red;
     width: 1rem;
     height: 1rem;
+    position: absolute;
+    top: 100px;
+    left: 100px;
+}
+
+@keyframes rotating {
+    from{
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#crosshair {
+    width: 0;
+    height: 0;
+    border: solid 5px;
+    border-color: transparent transparent black transparent;
+    top: -50px;
+    left: 3px;
+    position: absolute;
+    transform-origin: 4px 57px;
+    /*
+    transform: rotate(360deg);
+    animation: rotating 1s linear infinite;
+    */
 }
